@@ -36,7 +36,5 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/suchi/Downloads/javax.servlet-api-3.1.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/suchi/Downloads/jfinal-4.9.03.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

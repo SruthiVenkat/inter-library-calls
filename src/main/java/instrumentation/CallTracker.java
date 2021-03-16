@@ -20,33 +20,55 @@ public class CallTracker{
 	public static Map<String, List<String>> libsToPkgs = new HashMap<String, List<String>>();
 	public static Map<Map<String, String>, Integer> noOfCallsAcrossLibs = new HashMap<Map<String, String>, Integer>();
 	public static DatabaseConnector connector;
-	
+	public static List<String> excludeMethods;
+
 	CallTracker() {
 		connector = DatabaseConnector.buildDatabaseConnector();
 		connector.connect();
 		libsToPkgs = connector.getLibsToPkgs();
+		excludeMethods = connector.getListOfExcludedMethods();
 	}
 
-	@Pointcut("call(* *(..)) && !within(instrumentation.*) && !cflow(call(* java*(..)))")
-	public void getCalls(){}//pointcut name
+	@Pointcut("call(* *(..)) && !within(instrumentation.*) && if() && !cflow(call(* java*(..)))")
+	public static boolean getCalls(JoinPoint jp, final EnclosingStaticPart thisEnclosingJoinPoint){ //pointcut name
+		String completeCallerMethodName = thisEnclosingJoinPoint.getSignature().getDeclaringType().getName()
+				+ "." + thisEnclosingJoinPoint.getSignature().getName();
+		//String completeCalledMethodName = jp.getSignature().getDeclaringType().getName()
+		//		+ "." + jp.getSignature().getName();
+		if (excludeMethods.contains(completeCallerMethodName))
+			return false;
+		return true;
+	}
 	
-	@Before("getCalls()")//applying pointcut on before advice
+	@Before("getCalls(jp, thisEnclosingJoinPoint)")//applying pointcut on before advice
 	public void callsAdvice(JoinPoint jp, final EnclosingStaticPart thisEnclosingJoinPoint) // advice
 	{
 		Class<?> methodCallerClass = thisEnclosingJoinPoint.getSignature().getDeclaringType();
 		Class<?> methodCalledClass = jp.getSignature().getDeclaringType();
 		Entry<String, List<String>> unknownEntry = new AbstractMap.SimpleEntry<String, List<String>>("unknownLib", new ArrayList<String>());
-		String callingMethodLibName = libsToPkgs.entrySet().stream()
-				.filter(map -> map.getValue().contains(methodCallerClass.getPackage().getName()))
-				.findAny().orElse(unknownEntry).getKey();
-		String calledMethodLibName = libsToPkgs.entrySet().stream()
-				.filter(map -> map.getValue().contains(methodCalledClass.getPackage().getName()))
-				.findAny().orElse(unknownEntry).getKey();
+		String callingMethodLibName = "";
+		String calledMethodLibName = "";
+		if (methodCallerClass.getPackage()==null || methodCalledClass.getPackage()==null)
+			return;
+		try {
+			callingMethodLibName = libsToPkgs.entrySet().stream()
+			.filter(map -> map.getValue().contains(methodCallerClass.getPackage().getName()))
+			.findAny().orElse(unknownEntry).getKey();
+			calledMethodLibName = libsToPkgs.entrySet().stream()
+			.filter(map -> map.getValue().contains(methodCalledClass.getPackage().getName()))
+			.findAny().orElse(unknownEntry).getKey();
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+		}
 
 		if (!callingMethodLibName.equals(calledMethodLibName)) {
 				String callingMethodName = thisEnclosingJoinPoint.getSignature().getName();
 				String callingClassName = methodCallerClass.getName();
 				String callingDescriptorName = "";
+				String calledMethodName = jp.getSignature().getName();
+				String calledClassName = methodCalledClass.getName();
+				String calledDescriptorName = "";
+
 				try {
 					callingDescriptorName = NameUtility.getDescriptor(((MethodSignature)thisEnclosingJoinPoint.getSignature()).getMethod());
 				} catch (ClassCastException e) {
@@ -56,9 +78,6 @@ public class CallTracker{
 						System.out.println("Error while casting to Signature "+ex.toString());
 					}
 				}
-				String calledMethodName = jp.getSignature().getName();
-				String calledClassName = methodCalledClass.getName();
-				String calledDescriptorName = "";
 				try {
 					calledDescriptorName = NameUtility.getDescriptor(((MethodSignature)jp.getSignature()).getMethod());
 				} catch (ClassCastException e) {
