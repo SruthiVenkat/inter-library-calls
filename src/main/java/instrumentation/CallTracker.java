@@ -30,15 +30,17 @@ public class CallTracker{
 	}
 
 	@Pointcut("call(* *(..)) && !within(instrumentation.*) && if() && !cflow(call(* java*(..)))")
-	public static boolean getCalls(final EnclosingStaticPart thisEnclosingJoinPoint){ //pointcut name
-		String completeMethodName = thisEnclosingJoinPoint.getSignature().getDeclaringType().getName()
+	public static boolean getCalls(JoinPoint jp, final EnclosingStaticPart thisEnclosingJoinPoint){ //pointcut name
+		String completeCallerMethodName = thisEnclosingJoinPoint.getSignature().getDeclaringType().getName()
 				+ "." + thisEnclosingJoinPoint.getSignature().getName();
-		if (excludeMethods.contains(completeMethodName))
+		//String completeCalledMethodName = jp.getSignature().getDeclaringType().getName()
+		//		+ "." + jp.getSignature().getName();
+		if (excludeMethods.contains(completeCallerMethodName))
 			return false;
 		return true;
 	}
 	
-	@Before("getCalls(thisEnclosingJoinPoint)")//applying pointcut on before advice
+	@Before("getCalls(jp, thisEnclosingJoinPoint)")//applying pointcut on before advice
 	public void callsAdvice(JoinPoint jp, final EnclosingStaticPart thisEnclosingJoinPoint) // advice
 	{
 		Class<?> methodCallerClass = thisEnclosingJoinPoint.getSignature().getDeclaringType();
@@ -66,6 +68,7 @@ public class CallTracker{
 				String calledMethodName = jp.getSignature().getName();
 				String calledClassName = methodCalledClass.getName();
 				String calledDescriptorName = "";
+
 				try {
 					callingDescriptorName = NameUtility.getDescriptor(((MethodSignature)thisEnclosingJoinPoint.getSignature()).getMethod());
 				} catch (ClassCastException e) {
