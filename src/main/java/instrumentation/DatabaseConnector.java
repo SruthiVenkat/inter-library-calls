@@ -1,5 +1,7 @@
 package instrumentation;
 
+import java.io.File;
+import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -10,8 +12,12 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
 
 /**
  * 
@@ -430,5 +436,26 @@ public class DatabaseConnector {
 			}
 			return id;
 		}
+	}
+	
+	public List<String> getListOfExcludedMethods() {
+		List<String> excludeMethods = new ArrayList<String>();
+		// get list of methods to be excluded
+		JSONParser jsonParser = new JSONParser();
+		int index = new File(".").getAbsolutePath().indexOf("inter-library-calls");
+		String filePath = new File(".").getAbsolutePath().substring(0, index)+File.separator
+				+"inter-library-calls"+File.separator+"projects"+File.separator+"exclude-methods.json";
+        try (FileReader reader = new FileReader(filePath))
+        {
+            Object obj = jsonParser.parse(reader);
+            JSONArray excludeMethodsArr = (JSONArray) obj;
+            Iterator<String> iterator = excludeMethodsArr.iterator();
+            while (iterator.hasNext()) {
+            	excludeMethods.add((String)iterator.next());
+            }
+        } catch (Exception e) {
+			System.out.println("Error while reading file with methods to be excluded" + e.toString());		
+		}				
+		return excludeMethods;
 	}
 }
