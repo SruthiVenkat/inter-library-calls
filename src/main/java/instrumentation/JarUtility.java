@@ -3,6 +3,7 @@ package instrumentation;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -30,7 +31,7 @@ public class JarUtility {
 	
 	public static void initLibsToCountsAndPackages(DatabaseConnector connector) {
 		Map<String, ArrayList<Object>> libsToCountsAndPackages = new HashMap<String, ArrayList<Object>>();
-
+		libsToCountsAndPackages.put("unknownLib", new ArrayList<Object>(Arrays.asList(0, "")));
 		// get wars and jars for projects, initialize counts and packages
 		JSONParser jsonParser = new JSONParser();
         try (FileReader reader = new FileReader(new File(".").getAbsolutePath()+File.separator
@@ -70,6 +71,8 @@ public class JarUtility {
 
 			try {
 				unzip(warFile, tmpFolder);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -128,11 +131,11 @@ public class JarUtility {
 		} catch (Exception e) {
 			System.out.println("Error while parsing jar" + e.toString());
 		}
-		deleteDirectory(destDir);
+		//deleteDirectory(destDir);
 		return new ArrayList<Object>(Arrays.asList(count, String.join(":", pkgNames)));
 	}
 
-	public static void unzip(String zipFilePath, String destDirectory) throws IOException {
+	public static void unzip(String zipFilePath, String destDirectory) throws IOException, FileNotFoundException {
 		File destDir = new File(destDirectory);
 		if (!destDir.exists()) {
 			destDir.mkdir();
@@ -156,7 +159,7 @@ public class JarUtility {
 		zipIn.close();
 	}
 
-	private static void extractFile(JarInputStream zipIn, String filePath) throws IOException {
+	private static void extractFile(JarInputStream zipIn, String filePath) throws IOException, FileNotFoundException {
 		BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));
 		byte[] bytesIn = new byte[4096];
 		int read = 0;

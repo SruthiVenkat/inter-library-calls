@@ -232,9 +232,12 @@ public class DependentTestRunner {
 			request.setGoals(Arrays.asList("clean", "install"));
 		else
 			request.setGoals(Arrays.asList("install"));
+		
 		request.setMavenOpts("-Dlicense.skip=true -DskipTests=true -Dcheckstyle.skip=true");
 
-		System.setProperty("maven.home", System.getenv("MAVEN_HOME")); //TODO - pick it up based on system
+		request.setJavaHome(new File("/usr/lib/jvm/java-8-openjdk-amd64/jre/"));
+		System.setProperty("maven.home", "/usr/share/maven"); //System.getenv("MAVEN_HOME")) - windows; //TODO - pick it up based on system
+		//System.setProperty("maven.home", System.getenv("MAVEN_HOME")); //TODO - pick it up based on system
 		Invoker invoker = new DefaultInvoker();
 		try {
 			invoker.execute( request );
@@ -251,7 +254,9 @@ public class DependentTestRunner {
 		request.setGoals(Arrays.asList("test"));
 		request.setMavenOpts("-Dlicense.skip=true");
 
-		System.setProperty("maven.home", System.getenv("MAVEN_HOME")); //TODO - pick it up based on system
+		request.setJavaHome(new File("/usr/lib/jvm/java-8-openjdk-amd64/jre/"));
+		System.setProperty("maven.home", "/usr/share/maven"); //System.getenv("MAVEN_HOME")) - windows; //TODO - pick it up based on system
+		//System.setProperty("maven.home", System.getenv("MAVEN_HOME")); //TODO - pick it up based on system
 
 		Invoker invoker = new DefaultInvoker();
 		try {

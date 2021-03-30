@@ -42,6 +42,7 @@
                     <complianceLevel>1.8</complianceLevel>
                     <encoding>UTF-8</encoding>
                     <verbose>true</verbose>
+				    <!-- the following jars will be weaved -->
 				    <weaveDependencies>
 				        <weaveDependency>  
 				            <groupId>ca.waterloo.pl.breakingchangebarbaz</groupId>

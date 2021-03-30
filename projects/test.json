@@ -1,0 +1,37 @@
+[
+	{
+		"libName": "openimaj",
+		"folderName": "openimaj",
+		"generatedWarJarName": "openimaj"
+	},
+	{
+		"libName": "errai",
+		"folderName": "errai/errai-ui",
+		"generatedWarJarName": "errai"
+	},
+	{
+		"libName": "resolver",
+		"folderName": "resolver",
+		"generatedWarJarName": "resolver"
+	},
+	{
+		"libName": "mockserver",
+		"folderName": "mockserver",
+		"generatedWarJarName": "mockserver"
+	},
+	{
+		"libName": "neo4j",
+		"folderName": "neo4j",
+		"generatedWarJarName": "neo4j"
+	},
+	{
+		"libName": "neo4j-browser",
+		"folderName": "neo4j-browser",
+		"generatedWarJarName": "neo4j-browser"
+	},
+	{
+		"libName": "ninja",
+		"folderName": "ninja",
+		"generatedWarJarName": "ninja"
+	}
+]

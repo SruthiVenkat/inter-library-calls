@@ -32,8 +32,10 @@ import org.json.simple.parser.JSONParser;
  * (callee_method_id) REFERENCES all_methods(id) ON DELETE CASCADE);
  * 
  * create table all_methods (id SERIAL PRIMARY KEY, method_name
- * varchar(255),library_name varchar(255), UNIQUE(method_name, library_name));
+ * varchar(255),library_name varchar(255), UNIQUE(method_name, library_name), FOREIGN KEY
+ * (library_name) REFERENCES libs_info(library_name) ON DELETE CASCADE);
  *
+ * create table if not exists libs_info (library_name varchar(255) PRIMARY KEY, total_count int, pkgs text);
  */
 public class DatabaseConnector {
 	private static DatabaseConnector dc;
@@ -82,19 +84,19 @@ public class DatabaseConnector {
 				System.out.println(ex);
 		}
 		connect();	
-		String SQL2 = "create table if not exists all_methods (id SERIAL PRIMARY KEY, method_name varchar(255),library_name varchar(255), UNIQUE(method_name, library_name));";
+		String SQL2 = "create table if not exists libs_info (library_name varchar(255) PRIMARY KEY, total_count int, pkgs text);";
 		try (PreparedStatement pstmt = conn.prepareStatement(SQL2)) {
 			pstmt.executeUpdate();
 		} catch (SQLException ex) {
 			System.out.println(ex);
 		}
-		String SQL3 = "create table if not exists caller_callee_count (id SERIAL PRIMARY KEY, caller_method_id int, callee_method_id int,count int, FOREIGN KEY (caller_method_id) REFERENCES all_methods(id) ON DELETE CASCADE, FOREIGN KEY (callee_method_id) REFERENCES all_methods(id) ON DELETE CASCADE);";
+		String SQL3 = "create table if not exists all_methods (id SERIAL PRIMARY KEY, method_name varchar(255),library_name varchar(255), UNIQUE(method_name, library_name), FOREIGN KEY(library_name) REFERENCES libs_info(library_name) ON DELETE CASCADE);";
 		try (PreparedStatement pstmt = conn.prepareStatement(SQL3)) {
 			pstmt.executeUpdate();
 		} catch (SQLException ex) {
 			System.out.println(ex);
 		}
-		String SQL4 = "create table if not exists libs_info (id SERIAL PRIMARY KEY, library_name varchar(255), total_count int, pkgs text, UNIQUE(library_name));";
+		String SQL4 = "create table if not exists caller_callee_count (id SERIAL PRIMARY KEY, caller_method_id int, callee_method_id int,count int, FOREIGN KEY (caller_method_id) REFERENCES all_methods(id) ON DELETE CASCADE, FOREIGN KEY (callee_method_id) REFERENCES all_methods(id) ON DELETE CASCADE);";
 		try (PreparedStatement pstmt = conn.prepareStatement(SQL4)) {
 			pstmt.executeUpdate();
 		} catch (SQLException ex) {
@@ -443,6 +445,8 @@ public class DatabaseConnector {
 		// get list of methods to be excluded
 		JSONParser jsonParser = new JSONParser();
 		int index = new File(".").getAbsolutePath().indexOf("inter-library-calls");
+		if (index == -1)
+			return excludeMethods;
 		String filePath = new File(".").getAbsolutePath().substring(0, index)+File.separator
 				+"inter-library-calls"+File.separator+"projects"+File.separator+"exclude-methods.json";
         try (FileReader reader = new FileReader(filePath))

@@ -1,8 +1,57 @@
 [
-	
 	{
-		"libName": "extentreports-java-5.0.7",
-		"folderName": "extentreports-java-5.0.7",
-		"generatedWarJarName": "extentreports-5.0.7"
+		"libName": "dd4t-2-java",
+		"folderName": "dd4t-2-java/dd4t-core",
+		"generatedWarJarName": "dd4t-2-java"
+	},
+	{
+		"libName": "arquillian-extension-drone",
+		"folderName": "arquillian-extension-drone/drone-webdriver",
+		"generatedWarJarName": "arquillian-extension-drone"
+	},
+	{
+		"libName": "errai",
+		"folderName": "errai/errai-ui",
+		"generatedWarJarName": "errai"
+	},
+	{
+		"libName": "openimag",
+		"folderName": "core/core, tools/ImageCollectionTool, web/data-scraping",
+		"generatedWarJarName": "openimag"
+	},
+	{
+		"libName": "DependencyCheck",
+		"folderName": "DependencyCheck/core",
+		"generatedWarJarName": "DependencyCheck"
+	},
+	{
+		"libName": "sakai",
+		"folderName": "common/import-parsers/blackboard_6/impl, lessonbuilder/tool, kernel/kernel-impl",
+		"generatedWarJarName": "sakai"
+	},
+	{
+		"libName": "tools",
+		"folderName": "tools",
+		"generatedWarJarName": "tools"
+	},
+	{
+		"libName": "wisdom",
+		"folderName": "core/wisdom-test, extensions/wisdom-browser-watch",
+		"generatedWarJarName": "wisdom"
+	},
+	{
+		"libName": "tablesaw",
+		"folderName": "tablesaw/html",
+		"generatedWarJarName": "tablesaw"
+	},
+	{
+		"libName": "webmagic",
+		"folderName": "webmagic/webmagic-core",
+		"generatedWarJarName": "webmagic"
+	},
+	{
+		"libName": "xsoup",
+		"folderName": "xsoup",
+		"generatedWarJarName": "xsoup"
 	}
 ]
